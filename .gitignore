@@ -142,5 +142,7 @@ TempLattice*/
 
 /src/*.last
 /src/.DS_Store
+.DS_Store
+/notebook/.DS_Store
 
 /presentation_materials/
