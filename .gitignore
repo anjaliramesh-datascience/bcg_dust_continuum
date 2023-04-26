@@ -137,8 +137,8 @@ dmypy.json
 .log
 TempLattice*/
 
-/notebook/data/
-/notebook/plots/
+**/data/
+**/plots/
 
 /src/*.last
 /src/.DS_Store
