@@ -3,4 +3,9 @@ numpy
 matplotlib
 astropy
 statmorph
+pyvo
+astro-datalab
+ipython
+scipy
+PyAstronomy
 -e .

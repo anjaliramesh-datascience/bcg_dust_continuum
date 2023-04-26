@@ -111,6 +111,7 @@ ENV/
 bcg_project/
 env.bak/
 venv.bak/
+bcg_project/
 
 # Spyder project settings
 .spyderproject
@@ -129,3 +130,17 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# CASA files
+.pre
+.last
+.log
+TempLattice*/
+
+/notebook/data/
+/notebook/plots/
+
+/src/*.last
+/src/.DS_Store
+
+/presentation_materials/
