@@ -8,4 +8,5 @@ astro-datalab
 ipython
 scipy
 PyAstronomy
+jupyter
 -e .

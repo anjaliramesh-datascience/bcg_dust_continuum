@@ -13,6 +13,8 @@ from astropy.io import fits
 import scipy.ndimage as ndi
 from astropy.wcs import WCS
 from scipy import stats
+from math import *
+from numpy import *
 import matplotlib.pyplot as plt
 import matplotlib.colors as colors
 from matplotlib.colors import LogNorm
@@ -27,6 +29,7 @@ from astropy.visualization.mpl_normalize import ImageNormalize
 from astropy.visualization.stretch import LinearStretch, LogStretch, SqrtStretch
 from statmorph.utils.image_diagnostics import make_figure
 import warnings
+warnings.filterwarnings("ignore")
 from astropy.wcs import FITSFixedWarning
 warnings.filterwarnings('ignore', category=FITSFixedWarning)
 from astropy.coordinates import Angle
@@ -38,7 +41,7 @@ from regions import CircleSkyRegion, CirclePixelRegion
 from ast import literal_eval
 cosmo = FlatLambdaCDM(H0=70, Om0=0.3, Tcmb0=2.725)
 import matplotlib
-plt.style.use(['science', 'stylesheet.txt'])
+plt.style.use(['science'])
 import pickle
 from astropy.wcs.utils import skycoord_to_pixel
 import ast
@@ -50,49 +53,61 @@ from photutils.aperture import aperture_photometry
 from os.path import exists
 plt.rcParams.update({'figure.max_open_warning': 1000})
 
-#RMS and SNR dict
-with open("/Users/arames52/Research/Data/rms.pkl", "rb") as f:
-    rms_dict = pickle.load(f)
-with open("/Users/arames52/Research/Data/snr.pkl", "rb") as f:
-    snr_dict = pickle.load(f)
+image_path = "/Users/arames52/bcg_dust_continuum/notebook/data/MW_images/ALMA_images/"
 
+def read_alma_fits(file):
+    hdu = fits.open(file)[0]
+    header = hdu.header
+    data = hdu.data[0,0,:,:]
+    wcs = WCS(header, naxis = 2)
+    data = np.nan_to_num(data)
+    return data,header,wcs
 
-
-
-def make_psf(file):
-
-    data, header, wcs = di.read_alma_fits(file)
-    ra = header['RA']
-    dec = header['Dec']
-    bmaj = header['BMAJ']*u.deg.to(u.arcsec)/0.045
-    bmin = header['BMIN']*u.deg.to(u.arcsec)/0.045
-    pa = (header['BPA']  + 90)*u.deg.to(u.rad)
-    
+def image_cutout(file, size_in_arcsec):
+    data,header,wcs = read_alma_fits(file)
+    ra, dec = header['CRVAL1'], header['CRVAL2']
     position = SkyCoord(ra, dec, frame = 'fk5', unit = 'deg')
-    s = u.Quantity((3,3), u.arcsec)
-    image_cutout = Cutout2D(data, position = position, size = s, wcs = wcs).data
-    image_cutout[image_cutout<0] = 0
+    s = size_in_arcsec
+    size = u.Quantity((s,s), u.arcsec)
+    cutout = Cutout2D(data, position = position, size = size, wcs = wcs)
+    return cutout
 
-    psf = Gaussian2DKernel(x_stddev = gaussian_fwhm_to_sigma*bmin, y_stddev = gaussian_fwhm_to_sigma*bmaj, theta = pa, x_size = image_cutout.shape[0], y_size = image_cutout.shape[1]).array
+def compute_sersic(bcg_name):
 
-    return psf, image_cutout
-
-def compute_sersic(file):
-    threshold = 3*rms_dict[bcg]
+    file = glob.glob(image_path + bcg_name +"*.fits")[0]
+    data, header, wcs = read_alma_fits(file)
+    bmaj = header['BMAJ']*u.deg
+    bmin = header['BMIN']*u.deg
+    bpa = u.Quantity(header['BPA'], unit = "deg")
+    cdelt = header['CDELT2']*u.deg
+    x_sigma = bmin/cdelt
+    y_sigma = bmaj/cdelt
+    psf = Gaussian2DKernel(x_stddev=x_sigma*gaussian_fwhm_to_sigma, y_stddev=y_sigma*gaussian_fwhm_to_sigma, theta = bpa)
+    image = image_cutout(file, 8).data   
+    weightmap = np.full(image.shape, 2e-5)
+    threshold = 2*2e-5
     segm = photutils.detect_sources(image, threshold, npixels = 5)
-    label = argmax(segm.areas) + 1
+    label = np.argmax(segm.areas) + 1
     segmap = segm.data == label
-    segmap_float = ndi.uniform_filter(float64(segmap), size=10)
-    segmap = segmap_float > 0.5
-    source_morphs = statmorph.source_morphology(image, segmap, weightmap = weightmap, psf = psf)
+    segmap_float = ndi.uniform_filter(np.float64(segmap), size=10)
+    segmap = np.int64(segmap_float > 0.5)
+    source_morphs = statmorph.source_morphology(image, segmap, weightmap = weightmap)
     morph = source_morphs[0]
 
     return morph
 
-for file in alma_images:
+def save_sersic_results():
+    sersic_profile = {}
+    good_detections = ["CDFS-18", "ES1-18", "ES1-25", "ES1_z_0.99","ES1_z_0.99b","ES1_z_1.04","ES1_z_1.38","ES1_z_1.40",
+"ES1_z_1.60", "ES1_z_1.65", "ES1_z_1.70", "XMM-113", "XMM-29", "XMM-30", "XMM_z_0.9", "XMM_z_1.0"]
+    for bcg in good_detections:
+        morph = compute_sersic(bcg)
+        fig = make_figure(morph)
+        fig.suptitle(bcg, x = 0.8)
+        fig.savefig("/Users/arames52/bcg_dust_continuum/notebook/plots/" + bcg + "_sersic.png", dpi = 300)
+        sersic_profile[bcg] = (morph.sersic_n, morph.sersic_rhalf * 0.045)
+    return sersic_profile
 
-    bcg = file.split(alma_images_path)[-1].split("_natural.fits")[0]
-    data, header, wcs, image_cutout, psf = read_fits_cutout(file)
-    weightmap = np.full(image_cutout.shape, rms_dict[bcg])
-    morph = compute_sersic(image_cutout, weightmap, psf,bcg)
-
+sersic_profile_results = save_sersic_results()
+with open("/Users/arames52/bcg_dust_continuum/notebook/data/Derived_Data/sersic_results.pkl", "wb") as f:
+    pickle.dump(sersic_profile_results, f)
