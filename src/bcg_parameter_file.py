@@ -18,7 +18,7 @@ hermes_outpath = catalogs_path + "herschel_catalog/"
 # TCLEAN
  
 imsize = [864,864]
-cell = '0.045arcsec'
+cell = '0.045arcsec' #
 gridder = 'standard'
 deconvolver = 'hogbom'
 specmode = 'mfs'
@@ -62,3 +62,6 @@ weak_detections = ['CDFS19', 'ES1_z_0.88', 'ES1-35', 'XMM_z_0.81']
 lensed_detections = ['XMM-11', 'ES1-34']
 good_detections = ["CDFS-18", "ES1-18", "ES1-25", "ES1_z_0.99","ES1_z_0.99b","ES1_z_1.04","ES1_z_1.38","ES1_z_1.40",
 "ES1_z_1.60", "ES1_z_1.65", "ES1_z_1.70", "XMM-113", "XMM-29", "XMM-30", "XMM_z_0.9", "XMM_z_1.0"]
+
+# Image Properties
+pixel_scale = 0.045 

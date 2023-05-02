@@ -1,8 +1,8 @@
 import sys
 sys.path.append("/Users/arames52/bcg_dust_continuum/src/")
-import bcg_parameter_file as p
-import helper_functions as hf
-import data_ingestion as di
+# import bcg_parameter_file as p
+# import helper_functions as hf
+# import data_ingestion as di
 import glob
 import statmorph
 import photutils
@@ -78,20 +78,20 @@ def compute_sersic(bcg_name):
     data, header, wcs = read_alma_fits(file)
     bmaj = header['BMAJ']*u.deg
     bmin = header['BMIN']*u.deg
-    bpa = u.Quantity(header['BPA'], unit = "deg")
+    bpa = u.Quantity(header['BPA']+90, unit = "deg")
     cdelt = header['CDELT2']*u.deg
     x_sigma = bmin/cdelt
     y_sigma = bmaj/cdelt
     psf = Gaussian2DKernel(x_stddev=x_sigma*gaussian_fwhm_to_sigma, y_stddev=y_sigma*gaussian_fwhm_to_sigma, theta = bpa)
     image = image_cutout(file, 8).data   
     weightmap = np.full(image.shape, 2e-5)
-    threshold = 2*2e-5
+    threshold = photutils.detect_threshold(image, 1.5)
     segm = photutils.detect_sources(image, threshold, npixels = 5)
     label = np.argmax(segm.areas) + 1
     segmap = segm.data == label
     segmap_float = ndi.uniform_filter(np.float64(segmap), size=10)
     segmap = np.int64(segmap_float > 0.5)
-    source_morphs = statmorph.source_morphology(image, segmap, weightmap = weightmap)
+    source_morphs = statmorph.source_morphology(image, segmap, weightmap = weightmap, psf = None)
     morph = source_morphs[0]
 
     return morph
@@ -105,9 +105,9 @@ def save_sersic_results():
         fig = make_figure(morph)
         fig.suptitle(bcg, x = 0.8)
         fig.savefig("/Users/arames52/bcg_dust_continuum/notebook/plots/" + bcg + "_sersic.png", dpi = 300)
-        sersic_profile[bcg] = (morph.sersic_n, morph.sersic_rhalf * 0.045)
+        sersic_profile[bcg] = (morph.sersic_n, morph.sersic_rhalf * bpf.pixel_scale)
     return sersic_profile
 
-sersic_profile_results = save_sersic_results()
-with open("/Users/arames52/bcg_dust_continuum/notebook/data/Derived_Data/sersic_results.pkl", "wb") as f:
-    pickle.dump(sersic_profile_results, f)
+# sersic_profile_results = save_sersic_results()
+# with open("/Users/arames52/bcg_dust_continuum/notebook/data/Derived_Data/sersic_results.pkl", "wb") as f:
+#     pickle.dump(sersic_profile_results, f)

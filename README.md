@@ -14,7 +14,6 @@ In this project, we analyze the physical properties of objects (galaxies) in rad
 6. **notebook** folder contains data and plots 
 7. Activate the environment and run ...
 
-KEYWORDS - 
 
 ## Data Description
 
@@ -26,7 +25,9 @@ Calibrated measurement sets obtained after executing *scriptforPI.py from the do
 
 Multi-wavelength Flux Catalog - Provided the coordinates of the objects, some functions in data_ingestion.py help in querying catalog information and image cutouts from several surveys and telescope archive data like Dark Energy Survey (DES), the Spitzer Space Telescope, Herschel Space Observatory. For more information look at data_ingestion.py.
 
-KEYWORDS - 
+### bcg_parameter_file.py
+Specifies all the parameters that are used
+
 
 ## Data Analysis
 
@@ -60,6 +61,7 @@ Note - helper_functions.py (hf), bcg_parameter_file.py (bpf), data_ingestion.py 
 * Code - image_properties.py
 * Functions - 
     1. signal_rms() - runs CASA's IMSTAT to calculate properties in a given region
+* BCG region file - bcg_regions.txt - if region radius has to be changed, then modifications to be done on this file
 
 * Note - Run on CASA terminal
 
@@ -103,7 +105,7 @@ Download object information from different surveys and telescope and save as csv
 - This is stored for each field (CDFS, ES1, XMM)
 
 
-## multiwavelength_catalog_compilation.py
+## multiwavelength_catalog.py
 
 Reads the downloaded DES, SWIRE, HerMES and ALMA data and forms a combined multiwavelength flux catalog for all 26 BCGs
 
@@ -113,17 +115,31 @@ Reads the downloaded DES, SWIRE, HerMES and ALMA data and forms a combined multi
 ### mag_to_mJy()
 - Converts DES magnitudes to mJy units
         *  mJy is the desired unit for SED fitting
-
-
-multiwavlength_catalog.py
-
-Run multiwavelength_catalog(bcg)
+### vega_to_mjy()
+- Converts Sparcs Vega magnitudes to mJy units
+### multiwavelength_catalog()
+- Given bcg name, returns multiwavelength flux dictionary and nearest neighbours
 
 ### Surface Brightness Profile Fitting with Statmorph
 
 dust_continuum_morphology.py
 
-* Functions - compute_sersic(), save_sersic_results()
+* Functions - read_alma_fits(), image_cutout(), compute_sersic(), save_sersic_results()
+
+### compute_sersic()
+- Reads fits files, creates PSF, image cutout, weightmap and segmentation map
+- Return statmorph morphological parameter
+- Run save_sersic_results() to run statmorph on all bcgs and save the stamps
+
+## results_table.py
+
+- sfr_mstar_results() - provides the results from Cigale fit given BCG nomenclature
+- sersic_results() - provides Sersic properties of bcgs
+- main_table() - compiles all analysis results together and save master_data as csv file
+
+
+
+
 
 
 

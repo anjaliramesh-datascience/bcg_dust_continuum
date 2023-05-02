@@ -17,14 +17,14 @@ def region_params(i):
     region = "circle[["+ x +","+y+ "]," + r+ "]"
     return region
 
-natural_imfit_results = {}
+imfit_results = {}
 
 for i in range(len(bcgs)):
     bcg_image_file = glob.glob(p.alma_images_path + bcgs[i] + "*.fits")[0]
     bcg_region = region_parameters(i)
-    natural_imfit_results[bcgs[i]] = imfit(bcg_image_file, region = bcg_region)
+    imfit_results[bcgs[i]] = imfit(bcg_image_file, region = bcg_region)
 
 with open(p.data_path + "natural_imfit_results.pkl", "wb") as f:
-    pickle.dump(natural_imfit_results, f)
+    pickle.dump(imfit_results, f)
 
 

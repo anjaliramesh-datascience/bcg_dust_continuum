@@ -1,13 +1,6 @@
 weighting,uvtaper
 briggs,None
 natural,None
-natural,0.6arcsec
 natural,0.7arcsec
-natural,0.8arcsec
-natural,0.9arcsec
 natural,1arcsec
-natural,1.2arcsec
-natural,1.4arcsec
-natural,1.6arcsec
-natural,1.8arcsec
 natural,2arcsec

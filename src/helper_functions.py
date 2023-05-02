@@ -29,5 +29,9 @@ def folder_creation(folder_names_list):
     
     return None
 
+def img_file(path, bcg):
+
+    img = glob.glob(path + bcg + "*.fits")[0]
+    return img
 
 
