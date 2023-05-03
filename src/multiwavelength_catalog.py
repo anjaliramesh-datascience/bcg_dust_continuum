@@ -180,8 +180,6 @@ def multiwavelength_catalog(bcg_name):
     for col in cigale_columns[20:28]:
         mw_flux_dict[col] = hermes_match[col].values[0]
 
-    # if bcg_name in ["CDFS19", "ES1"]
-
     alma_flux_bcg = alma_flux_results[bcg_name]['deconvolved']['component0']['flux']
     mw_flux_dict['ALMA'] = alma_flux_bcg['value'][0] * 1000
     mw_flux_dict['ALMA_err'] = alma_flux_bcg['error'][0] * 1000

@@ -138,6 +138,11 @@ dust_continuum_morphology.py
 - main_table() - compiles all analysis results together and save master_data as csv file
 
 
+## Cigale run
+- example cigale parameter file : pcigale.ini
+- flux catalogs in notebook/data/cigale_flux_catalog/
+
+
 
 
 
