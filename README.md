@@ -52,7 +52,8 @@ Note - helper_functions.py (hf), bcg_parameter_file.py (bpf), data_ingestion.py 
 * Code - gaussian_profile_fitting.py (gpf)
 * Functions - 
     1. region_params() - returns region that encloses the object
-    2. The regions were manually - file /Users/arames52/bcg_dust_continuum/notebook/data/Derived_Data/bcg_regions.txt
+    2. The regions were manually selected such that it encompasses 3 sigma source.
+    3. Input file notebook/data/Derived_Data/bcg_regions.txt
 
 * Note - Run this in CASA terminal
 
