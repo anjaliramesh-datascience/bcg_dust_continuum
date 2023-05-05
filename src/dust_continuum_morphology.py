@@ -91,7 +91,7 @@ def compute_sersic(bcg_name):
     segmap = segm.data == label
     segmap_float = ndi.uniform_filter(np.float64(segmap), size=10)
     segmap = np.int64(segmap_float > 0.5)
-    source_morphs = statmorph.source_morphology(image, segmap, weightmap = weightmap, psf = None)
+    source_morphs = statmorph.source_morphology(image, segmap, weightmap = weightmap, psf = psf.array.value)
     morph = source_morphs[0]
 
     return morph
