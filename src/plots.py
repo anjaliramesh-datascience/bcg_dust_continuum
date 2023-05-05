@@ -20,12 +20,6 @@ import cmocean
 import numpy as np
 import bcg_parameter_file as bpf
 
-def figure_settings():
-    pass
-    
-
-def plot_sfr_mstar():
-    pass
 
 
 # Image Path 
@@ -174,13 +168,5 @@ def multiwavelength_postage_stamps(bcg_name, size):
 
 
     return fig
-
-
-
-def imfit_plot():
-    pass
-
-def sfr_mstar():
-    df = pd.read_csv("/Users/arames52/bcg_dust_continuum/notebook/data/Derived_Data/results_table.csv")
-    pass
+s
 
