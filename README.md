@@ -10,7 +10,7 @@ In this project, we analyze the physical properties of objects (galaxies) in rad
 2. In the bcg_parameter_file.py file replace "/Users/arames52/" wherever found to folder path you cloned the repository to
 3. Assuming conda is installed - conda activate bcg_project/
 4. conda install -r requirements.txt
-5. **src** folder has all the codes and readme files
+5. **src** folder has all the codes
 6. **notebook** folder contains data and plots 
 7. Activate the environment and run ...
 
