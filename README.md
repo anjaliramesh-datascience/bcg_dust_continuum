@@ -52,8 +52,10 @@ Note - helper_functions.py (hf), bcg_parameter_file.py (bpf), data_ingestion.py 
 * Code - gaussian_profile_fitting.py (gpf)
 * Functions - 
     1. region_params() - returns region that encloses the object
-    2. The regions were manually selected such that it encompasses 3 sigma source.
-    3. Input file notebook/data/Derived_Data/bcg_regions.txt
+    2. imfit_routine() - returns a dictionary of imfit calculated on Briggs, naturally weighted and tapered images
+    3. imfit_single_image() - returns a dictionary with the imfit routine performed on naturally weighted images
+    4. The regions were manually selected such that it encompasses 3 sigma source.
+    5. Input file notebook/data/Derived_Data/bcg_regions.txt
 
 * Note - Run this in CASA terminal
 
