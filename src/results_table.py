@@ -72,14 +72,14 @@ def main_table():
 
     return master_df.reset_index(drop = True)
 
-results_table = main_table()
-bcg_type = []
-for ind,row in results_table.iterrows():
-    if row['sSFR_gyr'] < row['sSFR_MS']/2:
-        bcg_type.append(0)
-    elif (row['sSFR_gyr'] > row['sSFR_MS']/2) & (row['sSFR_gyr'] < row['sSFR_MS']*2):
-        bcg_type.append(1)
-    elif (row['sSFR_gyr'] > row['sSFR_MS']*2):
-        bcg_type.append(2)
-results_table['bcg_type'] = bcg_type
-results_table.to_csv("/Users/arames52/bcg_dust_continuum/notebook/data/Derived_Data/results_table.csv", index = False)
+# results_table = main_table()
+# bcg_type = []
+# for ind,row in results_table.iterrows():
+#     if row['sSFR_gyr'] < row['sSFR_MS']/2:
+#         bcg_type.append(0)
+#     elif (row['sSFR_gyr'] > row['sSFR_MS']/2) & (row['sSFR_gyr'] < row['sSFR_MS']*2):
+#         bcg_type.append(1)
+#     elif (row['sSFR_gyr'] > row['sSFR_MS']*2):
+#         bcg_type.append(2)
+# results_table['bcg_type'] = bcg_type
+# results_table.to_csv("/Users/arames52/bcg_dust_continuum/notebook/data/Derived_Data/results_table.csv", index = False)

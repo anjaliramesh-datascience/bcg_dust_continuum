@@ -18,12 +18,9 @@ import data_ingestion as dload
 import multiwavelength_catalog as mwcat
 import cmocean
 import numpy as np
-import bcg_parameter_file as bpf
-
-
+import pickle
 
 # Image Path 
-
 des_images_path = "/Users/arames52/bcg_dust_continuum/notebook/data/MW_images/DES_images/"
 sparcs_images_path = "/Users/arames52/bcg_dust_continuum/notebook/data/MW_images/Sparcs_z_images/"
 irac_images_path = "/Users/arames52/bcg_dust_continuum/notebook/data/MW_images/IRAC_images/"
@@ -168,5 +165,57 @@ def multiwavelength_postage_stamps(bcg_name, size):
 
 
     return fig
-s
+
+non_detections = ["ES1-12", "ES1-26", "ES1-35", "CDFS19", "XMM-19", "XMM-27"]
+good_detections = ["CDFS-18", "ES1-18", "ES1-25", "ES1_z_0.99", "ES1_z_1.04", "ES1_z_1.38", "ES1_z_1.40", 
+"ES1_z_1.60", "ES1_z_1.65", "ES1_z_1.70", "XMM-113", "XMM-11", "XMM-29", "XMM-30",
+"XMM_z_0.9", "XMM_z_1.0"]
+weak_detections = ["ES1-34", "ES1_z_0.88","ES1_z_0.99b", "XMM_z_0.81"]
+
+def extract_natural_imfit_results():
+
+    with open("/Users/arames52/bcg_dust_continuum/notebook/data/CASA_imaging/natural_imfit_results.pkl", "rb") as f:
+        imfit_results = pickle.load(f)
+
+    shape_dict = {}
+    flux_dict = {}
+    alma_centroid = {}
+
+    for key,val in imfit_results.items():
+        flux_dict[key] = [val['deconvolved']['component0']['flux']['value'][0] * 1000, val['deconvolved']['component0']['flux']['error'][0] * 1000, round(val['deconvolved']['component0']['beam']['beamarcsec']['major']['value'],1)]
+        shape_dict[key] = [val['deconvolved']['component0']['shape']['majoraxis']['value'], val['deconvolved']['component0']['shape']['majoraxiserror']['value'], val['deconvolved']['component0']['shape']['minoraxis']['value'], 
+        val['deconvolved']['component0']['shape']['minoraxiserror']['value'], val['deconvolved']['component0']['shape']['positionangle']['value'], val['deconvolved']['component0']['shape']['positionangleerror']['value']]
+        alma_centroid[key] = val['results']['component0']['pixelcoords']
+    return flux_dict, shape_dict, alma_centroid
+
+
+def calculate_offsets():
+    offset_dict = {}
+    for bcg_name in good_detections:
+        _,_,alma_centroid = extract_natural_imfit_results()
+        _, mw_cat, _ = mwcat.multiwavelength_catalog(bcg_name)
+        redshift = bcg_redshift_df[bcg_redshift_df['bcg'] == bcg_name]['redshift'].values[0]
+        alma_img = img_prop.file_from_string(alma_images_path, bcg_name)
+        z_img = img_prop.file_from_string(sparcs_images_path, bcg_name)
+        data_z, header_z, wcs_z = dload.read_any_fits(z_img)
+        data_alma, header_alma, wcs_alma = dload.read_alma_fits(alma_img)
+        alma_center_pix = alma_centroid[bcg_name]
+        alma_center = wcs_alma.pixel_to_world(alma_center_pix[0], alma_center_pix[1])
+        alma_center_skycoord = SkyCoord(alma_center.ra, alma_center.dec, distance = cosmo.angular_diameter_distance(redshift), frame = 'icrs')
+        z_center = mw_cat['sparcs_nn'].iloc[0]
+        z_center_skycoord = SkyCoord(z_center['ra']*u.degree, z_center['dec']*u.degree, frame = 'icrs', distance = cosmo.angular_diameter_distance(redshift))
+        sep = z_center_skycoord.separation(alma_center_skycoord)
+        sep_kpc = round((sep.arcsecond/(cosmo.kpc_proper_per_arcmin(redshift)/60).value), 2)
+        pa = z_center_skycoord.position_angle(alma_center_skycoord)
+        dra, ddec = z_center_skycoord.spherical_offsets_to(alma_center_skycoord)    
+        return_dict = {"alma_ra": alma_center_skycoord.ra.value, "alma_dec": alma_center_skycoord.dec.value,
+        "z_ra": z_center_skycoord.ra.value, "z_dec":z_center_skycoord.dec.value, "alma_wcs": wcs_alma, "z_wcs": wcs_z,
+        "sep_arcsec" : sep.arcsecond, "sep_kpc": sep_kpc, "dra_arcsec": dra.to(u.arcsec).value, 
+        "ddec_arcsec": ddec.to(u.arcsec).value, "redshift": redshift}
+        offset_dict[bcg_name] = return_dict
+
+    return offset_dict
+
+
+
 
