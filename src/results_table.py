@@ -46,15 +46,15 @@ def sfr_mstar_results(bcg_name):
     
     return df
 
-def sersic_results(bcg_name):
+# def sersic_results(bcg_name):
 
-    morph = dcm.compute_sersic(bcg_name)
-    redshift = bcg_redshift_df[bcg_redshift_df['bcg'] == bcg_name]['redshift'].values[0]
-    re_kpc = cosmo.kpc_proper_per_arcmin(redshift)*(morph.sersic_rhalf*0.045 /60)
-    sersic_properties = [{"n": round(morph.sersic_n,1), "re": round(re_kpc.value,1)}]
-    df = pd.DataFrame(sersic_properties)
+#     morph = dcm.compute_sersic(bcg_name)
+#     redshift = bcg_redshift_df[bcg_redshift_df['bcg'] == bcg_name]['redshift'].values[0]
+#     re_kpc = cosmo.kpc_proper_per_arcmin(redshift)*(morph.sersic_rhalf*0.045 /60)
+#     sersic_properties = [{"n": round(morph.sersic_n,1), "re": round(re_kpc.value,1)}]
+#     df = pd.DataFrame(sersic_properties)
 
-    return df
+#     return df
 
 def main_table():
 
