@@ -1,6 +1,0 @@
-weighting,uvtaper
-briggs,None
-natural,None
-natural,0.7arcsec
-natural,1arcsec
-natural,2arcsec
