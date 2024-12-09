@@ -1,0 +1,47 @@
+****** Fit performed at Mon May 15 23:20:18 2023******
+
+Input parameters ---
+       --- imagename:           /Users/arames52/bcg_dust_continuum/notebook/data/CASA_imaging/natural_imaging/XMM-30_natural.fits
+       --- region:              
+       --- channel:             0
+       --- stokes:              I
+       --- mask:                
+       --- include pixel range: []
+       --- exclude pixel range: []
+*** Details of fit for channel number 0
+Number of pixels used in fit: 5767
+Input and residual image statistics (to be used as a rough guide only as to goodness of fit)
+       --- Standard deviation of input image: 2.9943e-05 Jy
+       --- Standard deviation of residual image: 2.09582e-05 Jy
+       --- RMS of input image: 3.06943e-05 Jy
+       --- RMS of residual image: 2.10225e-05 Jy
+
+Fit on XMM-30_natural.fits component 0
+Position ---
+       --- ra:    02:18:45.2385 +/- 0.0074 s (0.1103 arcsec along great circle)
+       --- dec: -005.42.55.3538 +/- 0.0419 arcsec
+       --- ra:  432.50 +/- 2.45 pixels
+       --- dec: 465.11 +/- 0.93 pixels
+
+Image component size (convolved with beam) ---
+       --- major axis FWHM:     1.188 +/- 0.263 arcsec
+       --- minor axis FWHM:     0.617 +/- 0.090 arcsec
+       --- position angle: 99.2 +/- 8.4 deg
+
+Clean beam size ---
+       --- major axis FWHM: 0.62 arcsec
+       --- minor axis FWHM: 0.53 arcsec
+       --- position angle: -69.94 deg
+Image component size (deconvolved from beam) ---
+       --- major axis FWHM:     1.02 +/- 0.33 arcsec
+       --- minor axis FWHM:     0.31 +/- 0.16 arcsec
+       --- position angle: 98 +/- 14 deg
+
+Flux ---
+       --- Integrated:   265 +/- 67 uJy
+       --- Peak:         119 +/- 21 uJy/beam
+       --- Polarization: I
+
+Spectrum ---
+      --- frequency:        233.0069 GHz (1.286625 mm)
+
